@@ -1,0 +1,55 @@
+﻿<Project>
+  <PropertyGroup>
+    <Authors>Chad Jessup</Authors>
+    <Company>Good Enough Industries</Company>
+    <Product>$(ProjectName)</Product>
+    <Version>0.0.1</Version>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NoWarn>CA1710</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--<RuntimeIdentifiers>win-x64;win-x86;linux-x64;linux-musl-x64;linux-arm;win-arm;win-arm64</RuntimeIdentifiers>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+    <Nullable>enable</Nullable>
+    <LangVersion>9.0</LangVersion>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <!-- Github Sourcelink values -->
+  <PropertyGroup>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <!-- These packages are automatically added to any csproj in this directory tree. -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.0-beta-20204-02" PrivateAssets="All" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Build all paths from location of this file. -->
+    <BaseDir>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)))</BaseDir>
+    <BuildOutputPath>$(BaseDir)\build</BuildOutputPath>
+    <!-- All build-time artifacts in the .\build folder -->
+
+    <!-- Files with pattern: {project}.csproj.FileListAbsolute.txt, *.AssemblyInfo.cs -->
+    <BaseIntermediateOutputPath>$(BuildOutputPath)\obj\$(Platform)\$(RuntimeIdentifier)\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <!-- nuget.g.targets, project.assets.json, project.nuget.cache -->
+    <MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
+
+    <OutputPath>$(BuildOutputPath)\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+
+    <NuspecOutputPath>$(BuildOutputPath)</NuspecOutputPath>
+    <NugetPackageOutputLocation>$(BuildOutputPath)\NugetPackages</NugetPackageOutputLocation>
+    <RestorePackagesPath>$(NugetPackageOutputLocation)</RestorePackagesPath>
+    <DocumentationFile>$(OutputPath)\$(MSBuildProjectName).XML</DocumentationFile>
+  </PropertyGroup>
+</Project>
