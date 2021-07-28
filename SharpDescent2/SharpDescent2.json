@@ -1,0 +1,8 @@
+{
+  "DataDirectory": "C:\\Descent 2\\",
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug"
+    }
+  }
+}

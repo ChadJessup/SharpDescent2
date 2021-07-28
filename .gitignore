@@ -4,3 +4,5 @@ Data/
 obj/
 bin/
 *.user
+/SharpDescent2/SharpDescent2.DevWorld.json
+/SharpDescent2/SharpDescent2.BeastWorld.json
