@@ -13,10 +13,10 @@ using static Sharp.Platform.Windows.User32;
 
 namespace Sharp.Platform.Windows
 {
-    public class WindowsSubSystem : IOSManager
+    public class WindowsOSManager : IOSManager
     {
         private readonly GameContext context;
-        private readonly ILogger<WindowsSubSystem> logger;
+        private readonly ILogger<WindowsOSManager> logger;
         private readonly IVideoManager video;
         public static readonly string WndClassName = "VorticeWindow";
         public readonly IntPtr HInstance = GetModuleHandle(null);
@@ -25,8 +25,8 @@ namespace Sharp.Platform.Windows
         private bool _paused;
         private bool exitRequested;
 
-        public WindowsSubSystem(
-            ILogger<WindowsSubSystem> logger,
+        public WindowsOSManager(
+            ILogger<WindowsOSManager> logger,
             IVideoManager video,
             GameContext context)
         {

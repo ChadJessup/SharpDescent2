@@ -41,7 +41,7 @@ namespace Sharp.Platform
 
         public bool ApplicationActive { get; private set; }
 
-        public async Task<int> StartGameLoop(CancellationToken token = default)
+        public async Task<int> StartGameLoop(CancellationToken token)
         {
             if (this.GameLogic is null)
             {
@@ -50,7 +50,7 @@ namespace Sharp.Platform
 
             this.State = GameState.Running;
 
-            var result = await Task.Run(() => this.GameLogic?.GameLoop());
+            var result = await Task.Run(() => this.GameLogic?.GameLoop(token));
 
             this.State = GameState.Exiting;
 

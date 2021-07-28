@@ -618,7 +618,7 @@ namespace Sharp.Platform.Windows
         internal delegate bool Callback(CallbackData data);
         internal class HookProcedureHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
-            private static bool _closing;
+            private static readonly bool _closing;
 
             static HookProcedureHandle()
             {

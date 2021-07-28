@@ -12,9 +12,14 @@ namespace SharpDescent2.Core
     {
         public bool IsInitialized { get; }
 
-        public Task<int> GameLoop(CancellationToken token = default)
+        public async Task<int> GameLoop(CancellationToken token)
         {
-            return Task.FromResult(0);
+            while (!token.IsCancellationRequested)
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(100.0), CancellationToken.None);
+            }
+
+            return 0;
         }
 
         public ValueTask<bool> Initialize()

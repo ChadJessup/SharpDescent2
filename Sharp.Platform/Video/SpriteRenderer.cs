@@ -11,21 +11,22 @@ namespace Sharp.Platform.Video
 {
     public class SpriteRenderer
     {
-        private readonly List<SpriteInfo> _draws = new List<SpriteInfo>();
+        private readonly List<SpriteInfo> _draws = new();
 
         private DeviceBuffer _vertexBuffer;
-        private DeviceBuffer _textBuffer;
-        private DeviceBuffer _orthoBuffer;
-        private ResourceLayout _orthoLayout;
-        private ResourceSet _orthoSet;
-        private ResourceLayout _texLayout;
-        private Pipeline _pipeline;
+        private readonly DeviceBuffer _textBuffer;
+        private readonly DeviceBuffer _orthoBuffer;
+        private readonly ResourceLayout _orthoLayout;
+        private readonly ResourceSet _orthoSet;
+        private readonly ResourceLayout _texLayout;
+        private readonly Pipeline _pipeline;
         protected GraphicsDevice gd;
 
-        public List<SpriteInfo> DrawCalls { get; protected set; }
-        private Dictionary<SpriteInfo, (Texture, TextureView, ResourceSet)> _loadedImages
-            = new Dictionary<SpriteInfo, (Texture, TextureView, ResourceSet)>();
+        private readonly Dictionary<SpriteInfo, (Texture, TextureView, ResourceSet)> _loadedImages
+            = new();
         private ResourceSet _textSet;
+
+        public List<SpriteInfo> DrawCalls { get; protected set; }
 
         public SpriteRenderer(GraphicsDevice gd)
         {
@@ -205,76 +206,6 @@ namespace Sharp.Platform.Video
                 this._vertexBuffer = gd.ResourceFactory.CreateBuffer(
                     new BufferDescription(size, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
             }
-        }
-
-        public struct SpriteInfo
-        {
-            public SpriteInfo(Texture texture, QuadVertex quad)
-            {
-                this.Texture = texture;
-                this.Quad = quad;
-                this.SpriteName = string.Empty;
-            }
-
-            public SpriteInfo(string spriteName, QuadVertex quad)
-            {
-                this.SpriteName = spriteName;
-                this.Quad = quad;
-                this.Texture = null;
-            }
-
-            public Texture? Texture { get; init; }
-            public string SpriteName { get; init; }
-            public QuadVertex Quad { get; init; }
-
-            public override bool Equals(object? obj)
-            {
-                if (obj is not SpriteInfo other)
-                {
-                    return false;
-                }
-
-                return this.SpriteName.Equals(other.SpriteName, StringComparison.OrdinalIgnoreCase)
-                    && this.Quad.Equals(other.Quad);
-            }
-
-            public override int GetHashCode() => HashCode.Combine(this.SpriteName, this.Quad);
-            public override string ToString() => $"{this.SpriteName}-{this.Quad}";
-        }
-
-        public struct QuadVertex
-        {
-            public const uint VertexSize = 24;
-
-            public Vector2 Position;
-            public Vector2 Size;
-            public RgbaByte Tint;
-            public float Rotation;
-
-            public QuadVertex(Vector2 position, Vector2 size) : this(position, size, RgbaByte.White, 0f) { }
-            public QuadVertex(Vector2 position, Vector2 size, RgbaByte tint, float rotation)
-            {
-                this.Position = position;
-                this.Size = size;
-                this.Tint = tint;
-                this.Rotation = rotation;
-            }
-
-            public override int GetHashCode() => HashCode.Combine(this.Position, this.Size, this.Tint, this.Rotation);
-            public override bool Equals(object? obj)
-            {
-                if (obj is not QuadVertex quad)
-                {
-                    return false;
-                }
-
-                return this.Position.Equals(quad.Position)
-                    && this.Size.Equals(quad.Size)
-                    && this.Tint.Equals(quad.Tint)
-                    && this.Rotation.Equals(quad.Rotation);
-            }
-
-            public override string ToString() => $"{this.Position}:{this.Size}";
         }
     }
 }

@@ -1,14 +1,22 @@
 ﻿using System;
 using System.Threading;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Sharp.Platform;
 using Sharp.Platform.Interfaces;
 using Sharp.Platform.Video;
 using Sharp.Platform.Windows;
-using SharpDescent2;
 using SharpDescent2.Core;
+using SharpDescent2.Core.Managers;
+using SharpDescent2.Core.Systems;
 
 CancellationTokenSource cts = new();
+
+Console.CancelKeyPress += (o, e) =>
+{
+    e.Cancel = true;
+    cts.Cancel();
+};
 
 var configurationBuilder = new ConfigurationBuilder()
     .AddJsonFile($"SharpDescent2.json", optional: true)
@@ -16,15 +24,12 @@ var configurationBuilder = new ConfigurationBuilder()
     .AddCommandLine(args);
 
 // pass configuration to GamePlatformBuilder...
-IGamePlatformBuilder platformBuilder = new GamePlatformBuilder(configurationBuilder);
-
-// Adding components that as closely match Jagged Alliance 2's internals as possible.
-// These components can have other components injected in when instantiated.
-platformBuilder
-    .AddDependency<IOSManager, WindowsSubSystem>()
+IGamePlatformBuilder platformBuilder = new GamePlatformBuilder(configurationBuilder)
+    .AddDependency<ITimerManager, TimerManager>()
+    .AddDependency<IOSManager, WindowsOSManager>()
     .AddDependency<IVideoManager, VeldridVideoManager>()
     .AddGameLogic<SharpDescent2GameLogic>()
-    .AddOtherComponents();
+    .AddGameSystems();
 
 // Initialize the game platform as a whole, which returns a game context
 // containing platform components for core game logic to use.
@@ -39,8 +44,13 @@ return result;
 
 public static class StandardSharpDescent2Extensions
 {
-    public static IGamePlatformBuilder AddOtherComponents(this IGamePlatformBuilder builder)
+    public static IGamePlatformBuilder AddGameSystems(this IGamePlatformBuilder builder)
     {
+        builder
+            .Services.AddSingleton<TextSystem>()
+
+            ;
+
         return builder;
     }
 }

@@ -9,6 +9,6 @@ namespace Sharp.Platform.Interfaces
 {
     public interface IGameLogic : IGamePlatformManager
     {
-        Task<int> GameLoop(CancellationToken token = default);
+        Task<int> GameLoop(CancellationToken token);
     }
 }

@@ -45,4 +45,8 @@
     <PackageReference Include="Veldrid.Utilities" Version="4.8.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Managers\" />
+  </ItemGroup>
+
 </Project>
