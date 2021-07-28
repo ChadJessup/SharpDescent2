@@ -3,6 +3,9 @@ using System.Threading;
 using Microsoft.Extensions.Configuration;
 using Sharp.Platform;
 using Sharp.Platform.Interfaces;
+using Sharp.Platform.Video;
+using Sharp.Platform.Windows;
+using SharpDescent2;
 using SharpDescent2.Core;
 
 CancellationTokenSource cts = new();
@@ -18,6 +21,8 @@ IGamePlatformBuilder platformBuilder = new GamePlatformBuilder(configurationBuil
 // Adding components that as closely match Jagged Alliance 2's internals as possible.
 // These components can have other components injected in when instantiated.
 platformBuilder
+    .AddDependency<IOSManager, WindowsSubSystem>()
+    .AddDependency<IVideoManager, VeldridVideoManager>()
     .AddGameLogic<SharpDescent2GameLogic>()
     .AddOtherComponents();
 

@@ -37,6 +37,7 @@ namespace Sharp.Platform
         public ISoundManager SoundManager { get; set; } = new NullSoundManager();
         public ITimerManager TimerManager { get; set; } = new NullTimerManager();
         public IClockManager ClockManager { get; set; } = new NullClockManager();
+        public IVideoManager VideoManager { get; set; } = new NullVideoManager();
 
         public bool ApplicationActive { get; private set; }
 

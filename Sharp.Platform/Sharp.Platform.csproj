@@ -8,6 +8,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Shaders\Compute.glsl" />
+    <None Remove="Assets\Shaders\Fragment.glsl" />
+    <None Remove="Assets\Shaders\sprite.frag" />
+    <None Remove="Assets\Shaders\sprite.frag.spv" />
+    <None Remove="Assets\Shaders\sprite.vert" />
+    <None Remove="Assets\Shaders\sprite.vert.spv" />
+    <None Remove="Assets\Shaders\Vertex.glsl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Shaders\Compute.glsl" />
+    <EmbeddedResource Include="Assets\Shaders\Fragment.glsl" />
+    <EmbeddedResource Include="Assets\Shaders\sprite.frag" />
+    <EmbeddedResource Include="Assets\Shaders\sprite.frag.spv" />
+    <EmbeddedResource Include="Assets\Shaders\sprite.vert" />
+    <EmbeddedResource Include="Assets\Shaders\sprite.vert.spv" />
+    <EmbeddedResource Include="Assets\Shaders\Vertex.glsl" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Ini" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />

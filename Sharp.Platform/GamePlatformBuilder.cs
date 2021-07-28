@@ -89,6 +89,7 @@ namespace Sharp.Platform
             this.GameContext.GameLogic = provider.GetRequiredService<IGameLogic>();
             this.GameContext.OSManager = provider.GetRequiredService<IOSManager>();
             this.GameContext.MusicManager = provider.GetRequiredService<IMusicManager>();
+            this.GameContext.VideoManager = provider.GetRequiredService<IVideoManager>();
 
             // Purposefully block on initialize with .Result.
             var success = this.GameContext.Initialize().Result;
