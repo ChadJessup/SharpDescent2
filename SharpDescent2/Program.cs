@@ -28,6 +28,7 @@ IGamePlatformBuilder platformBuilder = new GamePlatformBuilder(configurationBuil
     .AddDependency<ITimerManager, TimerManager>()
     .AddDependency<IOSManager, WindowsOSManager>()
     .AddDependency<IVideoManager, VeldridVideoManager>()
+    .AddDependency<ILibraryManager, LibraryManager>()
     .AddGameLogic<SharpDescent2GameLogic>()
     .AddGameSystems();
 
