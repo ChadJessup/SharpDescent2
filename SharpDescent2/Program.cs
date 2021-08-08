@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sharp.Platform;
 using Sharp.Platform.Interfaces;
+using Sharp.Platform.Managers;
 using Sharp.Platform.Video;
 using Sharp.Platform.Windows;
 using SharpDescent2.Core;
@@ -28,6 +29,7 @@ IGamePlatformBuilder platformBuilder = new GamePlatformBuilder(configurationBuil
     .AddDependency<ITimerManager, TimerManager>()
     .AddDependency<IOSManager, WindowsOSManager>()
     .AddDependency<IVideoManager, VeldridVideoManager>()
+    .AddDependency<IFileManager, DefaultFileManager>()
     .AddDependency<ILibraryManager, LibraryManager>()
     .AddGameLogic<SharpDescent2GameLogic>()
     .AddGameSystems();
@@ -47,9 +49,13 @@ public static class StandardSharpDescent2Extensions
 {
     public static IGamePlatformBuilder AddGameSystems(this IGamePlatformBuilder builder)
     {
-        builder
-            .Services.AddSingleton<TextSystem>()
-
+        builder.Services
+            .AddSingleton<TextSystem>()
+            .AddSingleton<ObjectSystem>()
+            .AddSingleton<PolyObjSystem>()
+            .AddSingleton<CollisionSystem>()
+            .AddSingleton<SegmentSystem>()
+            .AddSingleton<Player>()
             ;
 
         return builder;

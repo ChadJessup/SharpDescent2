@@ -6,8 +6,8 @@ namespace SharpDescent2.Core.DataStructures
     public class robot_info
     {
         public int model_num;                          // which polygon model?
-        public Vector3[] gun_points = new Vector3[Robots.MAX_GUNS];            // where each gun model is
-        public byte[] gun_submodels = new byte[Robots.MAX_GUNS];      // which submodel is each gun in?
+        public Vector3[] gun_points = new Vector3[MAX.GUNS];            // where each gun model is
+        public byte[] gun_submodels = new byte[MAX.GUNS];      // which submodel is each gun in?
         public short exp1_vclip_num;
         public short exp1_sound_num;
         public short exp2_vclip_num;
@@ -67,7 +67,7 @@ namespace SharpDescent2.Core.DataStructures
         public byte aim;                                      //	255 = perfect, less = more likely to miss.  0 != random, would look stupid.  0=45 degree spread.  Specify in bitmaps.tbl in range 0.0..1.0
 
         //animation info
-        public jointlist[,] anim_states = new jointlist[Robots.MAX_GUNS + 1, Robots.N_ANIM_STATES];
+        public jointlist[,] anim_states = new jointlist[MAX.GUNS + 1, Robots.N_ANIM_STATES];
 
         public int always_0xabcd;                          // debugging
     }

@@ -7,10 +7,8 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using SharpDescent2.Core.DataStructures;
-using SharpDescent2.Core.Loaders;
-using SixLabors.ImageSharp.PixelFormats;
+using SharpDescent2.Core.Systems;
 
 namespace SharpDescent2.Core.Loaders
 {
@@ -22,7 +20,7 @@ namespace SharpDescent2.Core.Loaders
         public string FilePath { get; init; }
 
 
-        public unsafe static HAMArchive LoadFile(string path)
+        public static HAMArchive LoadFile(string path)
         {
             if (!File.Exists(path))
             {
@@ -52,19 +50,8 @@ namespace SharpDescent2.Core.Loaders
             file.Read(numberCountBytes);
 
             int numberOfTextures = MemoryMarshal.Read<int>(numberCountBytes);
-            var size = Unsafe.SizeOf<BitmapIndex>() * numberOfTextures;
-            using var bitmapIndexBuffer = MemoryPool<byte>.Shared.Rent(minBufferSize: size);
-            file.Read(bitmapIndexBuffer.Memory.Span.Slice(0, size));
-
-            var bitmapIndexes = MemoryMarshal.Cast<byte, BitmapIndex>(bitmapIndexBuffer.Memory.Span)
-                .ToArray();
-
-            size = Unsafe.SizeOf<TextureMapInfo>() * numberOfTextures;
-            using var tmiBuffer = MemoryPool<byte>.Shared.Rent(minBufferSize: size);
-            file.Read(tmiBuffer.Memory.Span.Slice(0, size));
-
-            var tmi = MemoryMarshal.Cast<byte, TextureMapInfo>(tmiBuffer.Memory.Span)
-                .ToArray();
+            var bitmapIndexes = cfread<BitmapIndex>(numberOfTextures, file);
+            var tmi = cfread<TextureMapInfo>(numberOfTextures, file);
 
             file.Read(numberCountBytes);
             int numberOfSounds = MemoryMarshal.Read<int>(numberCountBytes);
@@ -77,16 +64,16 @@ namespace SharpDescent2.Core.Loaders
 
             file.Read(numberCountBytes);
             int numberOfVClips = MemoryMarshal.Read<int>(numberCountBytes);
-            var VCLIPS = cfread<vclip>(Unsafe.SizeOf<vclip>(), numberOfVClips, file);
+            var VCLIPS = cfread<vclip>(numberOfVClips, file);
 
             file.Read(numberCountBytes);
             int numberOfEffects = MemoryMarshal.Read<int>(numberCountBytes);
-            var effects = cfread<eclip>(Unsafe.SizeOf<eclip>(), numberOfEffects, file);
+            var effects = cfread<eclip>(numberOfEffects, file);
 
             // 42976
             file.Read(numberCountBytes);
             int numberOfWallAnimations = MemoryMarshal.Read<int>(numberCountBytes);
-            var wallAnimations = cfread<wclip>(Unsafe.SizeOf<wclip>(), numberOfWallAnimations, file);
+            var wallAnimations = cfread<wclip>(numberOfWallAnimations, file);
 
             // 49406
             file.Read(numberCountBytes);
@@ -95,7 +82,7 @@ namespace SharpDescent2.Core.Loaders
 
             file.Read(numberCountBytes);
             int numberOfJoints = MemoryMarshal.Read<int>(numberCountBytes);
-            var jointPositions = cfread<jointpos>(Unsafe.SizeOf<jointpos>(), numberOfJoints, file);
+            var jointPositions = cfread<jointpos>(numberOfJoints, file);
 
             file.Read(numberCountBytes);
             int numberOfWeaponInfos = MemoryMarshal.Read<int>(numberCountBytes);
@@ -103,15 +90,126 @@ namespace SharpDescent2.Core.Loaders
 
             file.Read(numberCountBytes);
             int numberOfPowerupTypes = MemoryMarshal.Read<int>(numberCountBytes);
-            var powerupTypes = cfread<powerup_type_info>(Unsafe.SizeOf<powerup_type_info>(), numberOfPowerupTypes, file);
+            var powerupTypes = cfread<powerup_type_info>(numberOfPowerupTypes, file);
 
             file.Read(numberCountBytes);
             int numberOfPolygonModels = MemoryMarshal.Read<int>(numberCountBytes);
+            var polyModels = ParsePolyModels(numberOfPolygonModels, file);
+
+            for (int i = 0; i < numberOfPolygonModels; i++)
+            {
+                polyModels[i].model_data = cfread<byte>(polyModels[i].model_data_size, file);
+            }
+
+            var Dying_modelnums = cfread<int>(numberOfPolygonModels, file);
+            var Dead_modelnums = cfread<int>(numberOfPolygonModels, file);
+
+            file.Read(numberCountBytes);
+            int numberOfGauges = MemoryMarshal.Read<int>(numberCountBytes);
+            var gauges = cfread<BitmapIndex>(numberOfGauges, file);
+            var gaugesHires = cfread<BitmapIndex>(numberOfGauges, file);
+
+            file.Read(numberCountBytes);
+            int numberOfObjBitmaps = MemoryMarshal.Read<int>(numberCountBytes);
+            var ObjBitmaps = cfread<BitmapIndex>(numberOfObjBitmaps, file);
+            var ObjBitmapPtrs = cfread<ushort>(numberOfObjBitmaps, file);
+
+            var playerShip = ParsePlayerShip(file);
+
+            file.Read(numberCountBytes);
+            int numberOfCockpits = MemoryMarshal.Read<int>(numberCountBytes);
+            var cockpit_bitmap = cfread<BitmapIndex>(numberOfCockpits, file);
+
+            int First_multi_bitmap_num = cfread<int>(1, file)[0];
+
+            file.Read(numberCountBytes);
+            int numberOfReactors = MemoryMarshal.Read<int>(numberCountBytes);
+            var reactors = ParseReactors(numberOfReactors, file);
+
+            file.Read(numberCountBytes);
+            int Marker_model_num = MemoryMarshal.Read<int>(numberCountBytes);
 
             return new HAMArchive
             {
                 FilePath = path,
             };
+        }
+
+        private static List<reactor> ParseReactors(int numberOfReactors, Stream stream)
+        {
+            var reactors = new List<reactor>(numberOfReactors);
+            using var br = new BinaryReader(stream, Encoding.Default, leaveOpen: true);
+
+            for (int i = 0; i < numberOfReactors; i++)
+            {
+                var reactor = new reactor
+                {
+                    model_num = br.ReadInt32(),
+                    n_guns = br.ReadInt32(),
+                    gun_points = cfread<vms_vector>(MAX.CONTROLCEN_GUNS, stream),
+                    gun_dirs = cfread<vms_vector>(MAX.CONTROLCEN_GUNS, stream),
+                };
+
+                reactors.Add(reactor);
+            }
+
+            return reactors;
+        }
+
+        private static player_ship ParsePlayerShip(Stream stream)
+        {
+            using var br = new BinaryReader(stream, Encoding.Default, leaveOpen: true);
+            var playerShip = new player_ship
+            {
+                model_num = br.ReadInt32(),
+                expl_vclip_num = br.ReadInt32(),
+                mass = br.ReadInt32(),
+                drag = br.ReadInt32(),
+                max_thrust = br.ReadInt32(),
+                reverse_thrust = br.ReadInt32(),
+                brakes = br.ReadInt32(),
+                wiggle = br.ReadInt32(),
+                max_rotthrust = br.ReadInt32(),
+                gun_points = cfread<vms_vector>(8, stream),
+            };
+
+            return playerShip;
+        }
+
+        private static List<polymodel> ParsePolyModels(int numberOfPolygonModels, Stream stream)
+        {
+            var polyModels = new List<polymodel>(numberOfPolygonModels);
+            using var br = new BinaryReader(stream, Encoding.Default, leaveOpen: true);
+
+            for (int i = 0; i < numberOfPolygonModels; i++)
+            {
+                var start = stream.Position;
+                var polyModel = new polymodel
+                {
+                    n_models = br.ReadInt32(),
+                    model_data_size = br.ReadInt32(),
+                    model_data_ptr = cfread<int>(1, stream)[0],
+                    submodel_ptrs = cfread<int>(MAX.SUBMODELS, stream),
+                    submodel_offsets = cfread<vms_vector>(MAX.SUBMODELS, stream),
+                    submodel_norms = cfread<vms_vector>(MAX.SUBMODELS, stream),       //norm for sep plane
+                    submodel_pnts = cfread<vms_vector>(MAX.SUBMODELS, stream), //point on sep plane 
+                    submodel_rads = cfread<int>(MAX.SUBMODELS, stream),       //radius for each submodel
+                    submodel_parents = cfread<byte>(MAX.SUBMODELS, stream),      //what is parent for each submodel
+                    submodel_mins = cfread<vms_vector>(MAX.SUBMODELS, stream),
+                    submodel_maxs = cfread<vms_vector>(MAX.SUBMODELS, stream),
+                    mins = cfread<vms_vector>(1, stream)[0],
+                    maxs = cfread<vms_vector>(1, stream)[0],                          //min,max for whole model
+                    rad = br.ReadInt32(),
+                    first_texture = br.ReadUInt16(),
+                    n_textures = br.ReadByte(),
+                    simpler_model = br.ReadByte(),        //alternate model with less detail (0 if none, model_num+1 else)
+                };
+
+                var end = stream.Position;
+                polyModels.Add(polyModel);
+            }
+
+            return polyModels;
         }
 
         private static List<weapon_info> ParseWeaponInfos(int numberOfWeaponInfos, Stream stream)
@@ -124,13 +222,16 @@ namespace SharpDescent2.Core.Loaders
                 var wi = new weapon_info
                 {
                     render_type = br.ReadByte(),
+                    matter = br.ReadByte(),
+                    bounce = br.ReadByte(),
+
                     persistent = br.ReadByte(),
                     model_num = br.ReadInt16(),
                     model_num_inner = br.ReadInt16(),
 
                     flash_vclip = br.ReadByte(),
                     robot_hit_vclip = br.ReadByte(),
-                    flash_sound = br.ReadByte(),
+                    flash_sound = br.ReadInt16(),
 
                     wall_hit_vclip = br.ReadByte(),
                     fire_count = br.ReadByte(),
@@ -141,11 +242,10 @@ namespace SharpDescent2.Core.Loaders
                     wall_hit_sound = br.ReadInt16(),
 
                     destroyable = br.ReadByte(),
-                    matter = br.ReadByte(),
-                    bounce = br.ReadByte(),
                     homing_flag = br.ReadByte(),
 
                     speedvar = br.ReadByte(),
+
                     flags = br.ReadByte(),
                     flash = br.ReadByte(),
                     afterburner_size = br.ReadByte(),
@@ -202,7 +302,7 @@ namespace SharpDescent2.Core.Loaders
                 robot_info ri = new();
 
                 ri.model_num = br.ReadInt32();
-                for (int j = 0; j < Robots.MAX_GUNS; j++)
+                for (int j = 0; j < MAX.GUNS; j++)
                 {
                     Vector3 vector = new();
                     vector.X = br.ReadInt32();
@@ -240,13 +340,13 @@ namespace SharpDescent2.Core.Loaders
                 ri.mass = br.ReadInt32();
                 ri.drag = br.ReadInt32();
 
-                ri.field_of_view = cfread<int>(sizeof(int), Game.NDL, stream);
-                ri.firing_wait = cfread<int>(sizeof(int), Game.NDL, stream);
-                ri.firing_wait2 = cfread<int>(sizeof(int), Game.NDL, stream);
-                ri.turn_time = cfread<int>(sizeof(int), Game.NDL, stream);
+                ri.field_of_view = cfread<int>(Game.NDL, stream);
+                ri.firing_wait = cfread<int>(Game.NDL, stream);
+                ri.firing_wait2 = cfread<int>(Game.NDL, stream);
+                ri.turn_time = cfread<int>(Game.NDL, stream);
 
-                ri.max_speed = cfread<int>(sizeof(int), Game.NDL, stream);
-                ri.circle_distance = cfread<int>(sizeof(int), Game.NDL, stream);
+                ri.max_speed = cfread<int>(Game.NDL, stream);
+                ri.circle_distance = cfread<int>(Game.NDL, stream);
 
                 stream.Read(ri.rapidfire_count);
                 stream.Read(ri.evade_speed);
@@ -297,9 +397,11 @@ namespace SharpDescent2.Core.Loaders
             return robotInfos;
         }
 
-        private static T[] cfread<T>(int size, int number, Stream stream)
+        private static T[] cfread<T>(int number, Stream stream)
             where T : struct
         {
+            var size = Unsafe.SizeOf<T>();
+
             var totalSize = size * number;
             using var buffer = MemoryPool<byte>.Shared.Rent(minBufferSize: totalSize);
             stream.Read(buffer.Memory.Span.Slice(0, totalSize));
@@ -322,6 +424,11 @@ namespace SharpDescent2.Core.Loaders
     public unsafe struct weapon_info
     {
         public byte render_type;               // How to draw 0=laser, 1=blob, 2=object
+        public byte matter;               // energy/matter
+        public byte bounce;               // never/always/twice
+        // public byte matter;                        //	Flag: set if this object is matter (as opposed to energy)
+        // public byte bounce;                        //	1==always bounces, 2=bounces twice 
+
         public byte persistent;                    //	0 = dies when it hits something, 1 = continues (eg, fusion cannon)
         public short model_num;                    // Model num if rendertype==2.
         public short model_num_inner;          // Model num of inner part if rendertype==2.
@@ -339,8 +446,6 @@ namespace SharpDescent2.Core.Loaders
         public short wall_hit_sound;           // What sound for impact with wall
 
         public byte destroyable;               //	If !0, this weapon can be destroyed by another weapon.
-        public byte matter;                        //	Flag: set if this object is matter (as opposed to energy)
-        public byte bounce;                        //	1==always bounces, 2=bounces twice 
         public byte homing_flag;               //	Set if this weapon can home in on a target.
 
         public byte speedvar;                 //	allowed variance in speed below average, /128: 64 = 50% meaning if speed = 100, can be 50..100

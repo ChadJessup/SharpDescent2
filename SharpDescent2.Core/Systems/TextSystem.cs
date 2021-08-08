@@ -16,7 +16,6 @@ namespace SharpDescent2.Core.Systems
         {
             public const int NumberOfTextStrings = 649;
             public const byte BITMAP_TBL_XOR = 0xD3;
-
         }
 
         private readonly ILogger<TextSystem> logger;

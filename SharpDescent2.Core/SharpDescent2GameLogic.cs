@@ -16,19 +16,22 @@ namespace SharpDescent2.Core
         private readonly ILogger<SharpDescent2GameLogic> logger;
         private readonly IConfiguration configuration;
         private readonly ILibraryManager library;
+        private readonly ObjectSystem objects;
         private readonly TextSystem text;
 
-        public bool IsInitialized { get; }
+        public bool IsInitialized { get; private set; }
 
         public SharpDescent2GameLogic(
             ILogger<SharpDescent2GameLogic> logger,
             IConfiguration configuration,
             ILibraryManager libraryManager,
-            TextSystem textSystem)
+            TextSystem textSystem,
+            ObjectSystem objectSystem)
         {
             this.logger = logger;
             this.configuration = configuration;
             this.library = libraryManager;
+            this.objects = objectSystem;
             this.text = textSystem;
         }
 
@@ -42,10 +45,11 @@ namespace SharpDescent2.Core
             return 0;
         }
 
-        public ValueTask<bool> Initialize()
+        public async ValueTask<bool> Initialize()
         {
+            this.IsInitialized = await this.objects.Initialize();
 
-            return ValueTask.FromResult(true);
+            return this.IsInitialized;
         }
 
         public void Dispose()
