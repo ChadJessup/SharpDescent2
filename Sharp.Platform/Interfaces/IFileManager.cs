@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-
-namespace Sharp.Platform.Interfaces
+﻿namespace Sharp.Platform.Interfaces
 {
     public interface IFileManager : IGamePlatformManager
     {

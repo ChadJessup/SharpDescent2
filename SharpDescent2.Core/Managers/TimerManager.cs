@@ -1,39 +1,36 @@
-﻿using System;
-using System.Threading.Tasks;
-using Sharp.Platform.Interfaces;
+﻿using Sharp.Platform.Interfaces;
 
-namespace SharpDescent2.Core.Managers
+namespace SharpDescent2.Core.Managers;
+
+public class TimerManager : ITimerManager
 {
-    public class TimerManager : ITimerManager
+    public TimeSpan BaseTimeSlice { get; set; } = TimeSpan.FromSeconds(10.0);
+    public bool IsInitialized { get; private set; }
+
+    public DateTime GameSystemTime { get; private set; }
+    public DateTime GameStartTime { get; private set; }
+
+    public ValueTask<bool> Initialize()
     {
-        public TimeSpan BaseTimeSlice { get; set; } = TimeSpan.FromSeconds(10.0);
-        public bool IsInitialized { get; private set; }
+        this.GameStartTime = DateTime.Now;
+        this.GameSystemTime = DateTime.MinValue;
 
-        public DateTime GameSystemTime { get; private set; }
-        public DateTime GameStartTime { get; private set; }
+        this.IsInitialized = true;
 
-        public ValueTask<bool> Initialize()
-        {
-            this.GameStartTime = DateTime.Now;
-            this.GameSystemTime = DateTime.MinValue;
-
-            this.IsInitialized = true;
-            
-            return ValueTask.FromResult(true);
-        }
+        return ValueTask.FromResult(true);
+    }
 
 
-        public void PauseTime(bool shouldPause)
-        {
-        }
+    public void PauseTime(bool shouldPause)
+    {
+    }
 
-        public DateTime GetClock()
-        {
-            return DateTime.Now;
-        }
+    public DateTime GetClock()
+    {
+        return DateTime.Now;
+    }
 
-        public void Dispose()
-        {
-        }
+    public void Dispose()
+    {
     }
 }

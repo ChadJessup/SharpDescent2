@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Sharp.Platform.Interfaces;
+﻿using Sharp.Platform.Interfaces;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Veldrid;

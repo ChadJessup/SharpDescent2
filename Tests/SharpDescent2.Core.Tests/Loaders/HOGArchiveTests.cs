@@ -1,9 +1,4 @@
 ﻿#pragma warning disable xUnit1004 // Test methods should not be skipped
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SharpDescent2.Core.Loaders;
 using Xunit;
 

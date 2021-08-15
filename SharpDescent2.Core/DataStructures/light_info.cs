@@ -1,7 +1,6 @@
-﻿namespace SharpDescent2.Core.DataStructures
+﻿namespace SharpDescent2.Core.DataStructures;
+
+public struct light_info
 {
-    public struct light_info
-    {
-        int intensity;      //how bright the light is
-    }
+    int intensity;      //how bright the light is
 }

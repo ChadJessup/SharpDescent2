@@ -30,4 +30,10 @@
     <ProjectReference Include="..\SharpDescent2.Core\SharpDescent2.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="SharpDescent2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

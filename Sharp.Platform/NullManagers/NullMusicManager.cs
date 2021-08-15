@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Sharp.Platform.Interfaces;
+﻿using Sharp.Platform.Interfaces;
 
 namespace Sharp.Platform.NullManagers
 {

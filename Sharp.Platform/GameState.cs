@@ -1,14 +1,13 @@
-﻿namespace Sharp.Platform
+﻿namespace Sharp.Platform;
+
+public enum GameState
 {
-    public enum GameState
-    {
-        Unknown = 0,
-        StartingUp,
-        Initializing,
-        Running,
-        Paused,
-        Exiting,
-        Disposing,
-        ExitRequested,
-    }
+    Unknown = 0,
+    StartingUp,
+    Initializing,
+    Running,
+    Paused,
+    Exiting,
+    Disposing,
+    ExitRequested,
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SharpDescent2.Core.Loaders;
+﻿using SharpDescent2.Core.Loaders;
 using Xunit;
 
 namespace SharpDescent2.Core.Tests.Loaders

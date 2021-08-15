@@ -1,7 +1,6 @@
-﻿namespace Sharp.Platform.Interfaces
-{
-    public interface ISound3dManager : IGamePlatformManager
-    {
+﻿namespace Sharp.Platform.Interfaces;
 
-    }
+public interface ISound3dManager : IGamePlatformManager
+{
+
 }

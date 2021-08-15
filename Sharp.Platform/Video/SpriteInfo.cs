@@ -1,5 +1,4 @@
-﻿using System;
-using Veldrid;
+﻿using Veldrid;
 
 namespace Sharp.Platform.Video
 {
