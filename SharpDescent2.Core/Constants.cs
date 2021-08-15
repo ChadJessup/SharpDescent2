@@ -48,6 +48,10 @@ public static class MAX
     public const int OBJECT_TYPES = 16;
 
     public const int REACTORS = 7;
+
+    public const int EFFECTS = 110;
+    public const int BOSS_TELEPORT_SEGS = 100;
+    public const int EXPLODING_WALLS = 10;
 }
 
 public static class SegmentConstants

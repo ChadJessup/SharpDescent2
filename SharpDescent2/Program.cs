@@ -53,6 +53,13 @@ public static class StandardSharpDescent2Extensions
             .AddSingleton<PolyObjSystem>()
             .AddSingleton<CollisionSystem>()
             .AddSingleton<SegmentSystem>()
+            .AddSingleton<SpecialEffectsSystem>()
+            .AddSingleton<AISystem>()
+            .AddSingleton<NewDemoSystem>()
+            .AddSingleton<FireballSystem>()
+            .AddSingleton<GaugeSystem>()
+            .AddSingleton<Globals>()
+            .AddSingleton<GraphicsSystem>()
             .AddSingleton<Player>()
             ;
 

@@ -75,7 +75,6 @@ public class ObjectSystem : IGamePlatformManager
         num_objects = 1;                        //just the player
         Highest_object_index = 0;
 
-
         return this.IsInitialized;
     }
 

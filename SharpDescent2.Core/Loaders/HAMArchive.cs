@@ -1,10 +1,11 @@
 ﻿using System.Buffers;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using SharpDescent2.Core.DataStructures;
 using SharpDescent2.Core.Systems;
+
+using static SharpDescent2.Core.Loaders.CFile;
 
 namespace SharpDescent2.Core.Loaders;
 
@@ -414,19 +415,6 @@ public class HAMArchive
         }
 
         return robotInfos;
-    }
-
-    private static T[] cfread<T>(int number, Stream stream)
-        where T : struct
-    {
-        var size = Unsafe.SizeOf<T>();
-
-        var totalSize = size * number;
-        using var buffer = MemoryPool<byte>.Shared.Rent(minBufferSize: totalSize);
-        stream.Read(buffer.Memory.Span.Slice(0, totalSize));
-
-        return MemoryMarshal.Cast<byte, T>(buffer.Memory.Span.Slice(0, totalSize))
-            .ToArray();
     }
 }
 

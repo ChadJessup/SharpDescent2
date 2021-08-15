@@ -3,10 +3,10 @@
 namespace SharpDescent2.Core.DataStructures;
 
 [StructLayout(LayoutKind.Sequential, Pack = 2)]
-public readonly struct eclip
+public struct eclip
 {
     public readonly vclip vc;               //imbedded vclip
-    public readonly int time_left;      //for sequencing
+    public int time_left;      //for sequencing
     public readonly int frame_count;    //for sequencing
     public readonly short changing_wall_texture;            //Which element of Textures array to replace.
     public readonly short changing_object_texture;      //Which element of ObjBitmapPtrs array to replace.
