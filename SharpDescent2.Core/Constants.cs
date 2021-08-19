@@ -52,6 +52,9 @@ public static class MAX
     public const int EFFECTS = 110;
     public const int BOSS_TELEPORT_SEGS = 100;
     public const int EXPLODING_WALLS = 10;
+    public const int MISSIONS = 300;
+    public const int LEVELS_PER_MISSION = 30;
+    public const int SECRET_LEVELS_PER_MISSION = 6;
 }
 
 public static class SegmentConstants

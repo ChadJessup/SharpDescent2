@@ -13,7 +13,7 @@ public static class CFile
     }
 
     public static T cfread<T>(Stream stream)
-    where T : struct
+        where T : struct
     {
         var totalSize = Unsafe.SizeOf<T>();
 

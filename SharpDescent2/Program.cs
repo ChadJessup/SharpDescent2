@@ -61,6 +61,10 @@ public static class StandardSharpDescent2Extensions
             .AddSingleton<Globals>()
             .AddSingleton<GraphicsSystem>()
             .AddSingleton<Player>()
+            .AddSingleton<RenderSystem>()
+            .AddSingleton<CheatSystem>()
+            .AddSingleton<MenuSystem>()
+            .AddSingleton<MissionSystem>()
             ;
 
         return builder;

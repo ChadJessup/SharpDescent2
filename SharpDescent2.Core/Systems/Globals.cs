@@ -3,6 +3,8 @@
 public class Globals
 {
     public GM Game_mode { get; set; } = GM.GAME_OVER;
+
+    public DetailLevel Detail_level { get; set; } = DetailLevel.Default;
 }
 
 [Flags]
@@ -22,4 +24,15 @@ public enum GM
     CAPTURE = 512,// Capture the flag mode for D2
     HOARD = 1024,        // New hoard mode for D2 Christmas
     MULTI = 38,	//	You are in some type of multiplayer game
+}
+
+public enum DetailLevel
+{
+    // These didn't have real names, just boring = 0 and coolest = 5...
+    Boring = 0,
+    LessBoring = 1,
+    AlmostDefault = 2,
+    Default = 3,
+    Medium = 4,
+    Coolest = 5,
 }
